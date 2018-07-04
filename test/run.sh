@@ -34,12 +34,19 @@ do
     echo
 
     MAC_FOLDER=/tmp/kuzzle-build-$TRAVIS_COMMIT
+    echo -n "Creating directory..."
     ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no $MAC_USER@$MAC_HOST "mkdir $MAC_FOLDER"
+    echo " Done."
+    echo -n "Copying files..."
     scp -i ~/.ssh/id_rsa -r -o StrictHostKeyChecking=no ./setup.sh $MAC_USER@$MAC_HOST:$MAC_FOLDER
     scp -i ~/.ssh/id_rsa -r -o StrictHostKeyChecking=no ./test/ $MAC_USER@$MAC_HOST:$MAC_FOLDER
+    echo " Done."
     ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no $MAC_USER@$MAC_HOST "$MAC_FOLDER/test/run-macos.sh"
     EXIT_VALUE=$?
+    echo
+    echo -n "Cleaning up..."
     ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no $MAC_USER@$MAC_HOST "rm -rf $MAC_FOLDER"
+    echo " Done."
   else
     ${BASH_SOURCE%/*}/test-setup.sh $DISTRO $ARGS
     EXIT_VALUE=$?

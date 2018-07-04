@@ -1,14 +1,18 @@
 #!/usr/bin/expect -f
 
+global env
+
 proc color {foreground text} {
-    if { $::env(TERM) != "xterm" } {
+    global env
+    if { [ catch { info exists $env(TERM) } ] || $env(TERM) != "xterm" } {
         return $text
     }
     return [exec tput setaf $foreground]$text[exec tput sgr0]
 }
 
 proc bold {text} {
-    if { $::env(TERM) != "xterm" } {
+    global env
+    if { [ catch { info exists $env(TERM) } ] || $env(TERM) != "xterm" } {
         return $text
     }
     return [exec tput bold]$text[exec tput sgr0]
