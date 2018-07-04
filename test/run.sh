@@ -28,12 +28,18 @@ do
       echo
       exit -1
     fi
+    
+    echo
+    echo "Setting up test environment on remote Mac..."
+    echo
 
     MAC_FOLDER=/tmp/kuzzle-build-$TRAVIS_COMMIT
-    scp -r -o StrictHostKeyChecking=no . $MAC_USER@$MAC_HOST:$MAC_FOLDER
-    ssh -o StrictHostKeyChecking=no $MAC_USER@$MAC_HOST "$MAC_FOLDER/test/run-macos.sh"
+    ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no $MAC_USER@$MAC_HOST "mkdir $MAC_FOLDER"
+    scp -i ~/.ssh/id_rsa -r -o StrictHostKeyChecking=no ./setup.sh $MAC_USER@$MAC_HOST:$MAC_FOLDER
+    scp -i ~/.ssh/id_rsa -r -o StrictHostKeyChecking=no ./test/ $MAC_USER@$MAC_HOST:$MAC_FOLDER
+    ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no $MAC_USER@$MAC_HOST "$MAC_FOLDER/test/run-macos.sh"
     EXIT_VALUE=$?
-    ssh -o StrictHostKeyChecking=no $MAC_USER@$MAC_HOST "rm -rf $MAC_FOLDER"
+    ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no $MAC_USER@$MAC_HOST "rm -rf $MAC_FOLDER"
   else
     ${BASH_SOURCE%/*}/test-setup.sh $DISTRO $ARGS
     EXIT_VALUE=$?
