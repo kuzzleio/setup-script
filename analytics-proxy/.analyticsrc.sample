@@ -1,0 +1,32 @@
+{
+  // This is the port the proxy will listen to
+  "port": 3000,
+
+  // The Google Analytics configuration
+  "googleAnalytics": {
+    "Id": "UA-XXXXXXX-X"
+  },
+
+  // The Mailer configuration
+  "mail": {
+    // You can use this attribute in two ways:
+    // * as an array, to specify recipients that will receive _all_ the notifications,
+    // * as an object to specify recipients on a per-event basis.
+    "recipients": ["someone@somecompany.com"],
+    // The following options are passed to the nodemailer trasnport constructor
+    // see https://nodemailer.com/smtp/
+    "params": {
+      "host": "smtp.gmail.com",
+      "port": "465",
+      "ssl": true,
+      "authentication": "login",
+      "username": "me@gmail.com",
+      "password": "my_password"
+    }
+  },
+
+  // Logger configuration
+  "log": {
+    "filename": "/var/log/kuzzle-analytics.log"
+  }
+}

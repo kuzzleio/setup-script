@@ -1,0 +1,16 @@
+version: '2'
+
+services:
+  analytics:
+    build: .
+    volumes:
+      - "../:/var/app"
+      # Change this if you change the logger filename in the config.
+      - "../kuzzle-analytics.log:/var/log/kuzzle-analytics.log"
+    environment:
+      - analytics_port=80
+    command: /run.sh
+    labels:
+      consul.service: web
+      consul.tags: analytics
+

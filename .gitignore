@@ -1,0 +1,7 @@
+.idea
+kuzzle
+.setupsh-test.report
+.DS_Store
+.analyticsrc
+kuzzle-analytics.log
+node_modules
