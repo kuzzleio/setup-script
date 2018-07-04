@@ -21,6 +21,14 @@ fi
 for DISTRO in ${DISTROS[*]}
 do
   if [ "$DISTRO" = "osx" ]; then
+    if [ "$MAC_USER" == "" ] || [ "$MAC_HOST" == "" ]; then
+      echo
+      echo "Environment variables MAC_USER and MAC_HOST are needed by this script"
+      echo "but they do not seem to be set. Aborting."
+      echo
+      exit -1
+    fi
+
     MAC_FOLDER=/tmp/kuzzle-build-$TRAVIS_COMMIT
     scp -r -o StrictHostKeyChecking=no . $MAC_USER@$MAC_HOST:$MAC_FOLDER
     ssh -o StrictHostKeyChecking=no $MAC_USER@$MAC_HOST "$MAC_FOLDER/test/run-macos.sh"
