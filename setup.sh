@@ -10,7 +10,7 @@ CURL_OPTS="-sSL"
 CURL_PUSH_OPTS="-H Content-Type:application/json --data "
 WGET_OPTS="-qO-"
 WGET_PUSH_OPTS=" -O- --header=Content-Type:application/json --post-data="
-ANALYTICS_URL="http://analytics.kuzzle.io/"
+ANALYTICS_URL=${ANALYTICS_URL:-"http://analytics.kuzzle.io/"}
 GITTER_URL="https://gitter.im/kuzzleio/kuzzle"
 SUPPORT_MAIL="support@kuzzle.io"
 COMPOSE_YML_URL="https://kuzzle.io/docker-compose.yml"
@@ -83,7 +83,7 @@ os_lookup() {
         else
             DISTRO=$(ls -d /etc/[A-Za-z]*[_-][rv]e[lr]* | grep -v "lsb" | cut -d'/' -f3 | cut -d'-' -f1 | cut -d'_' -f1)
         fi
-        OS=$(echo $DISTRO | tr 'a-z' 'A-Z' | tr -d '"')
+        OS=$(echo $DISTRO | head -n1 | awk '{print $1;}' | tr 'a-z' 'A-Z' | tr -d '"')
     } ;;
     *) 
     {
