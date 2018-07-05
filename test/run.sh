@@ -72,4 +72,9 @@ do
   fi
 done
 
+echo
+echo "=========== Test results ==========="
+cat $REPORT_FILE
+echo "===================================="
+
 exit $FINAL_EXIT_VALUE

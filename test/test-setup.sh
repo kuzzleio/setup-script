@@ -25,7 +25,7 @@ echo
 echo " Setting up test environment..."
 
 # Build and start docker container
-eval "docker run -d -e SETUPSH_SHOW_DEBUG -e COMPOSE_HTTP_TIMEOUT -e DOCKER_CLIENT_TIMEOUT -e CONNECT_TO_KUZZLE_MAX_RETRY --privileged --rm --name $CONTAINER_NAME -v $PWD:/opt $IMAGE_NAME $OUTPUT"
+eval "docker run -d -e SETUPSH_SHOW_DEBUG -e COMPOSE_HTTP_TIMEOUT -e DOCKER_CLIENT_TIMEOUT -e ANALYTICS_URL -e CONNECT_TO_KUZZLE_MAX_RETRY --privileged --rm --name $CONTAINER_NAME -v $PWD:/opt $IMAGE_NAME $OUTPUT"
 
 EXIT_VALUE=$?
 if [ $EXIT_VALUE -ne 0 ]; then
@@ -62,7 +62,7 @@ echo
 #    ; echo $?
 #
 # but none worked (both return 0 in any case).
-# By total chance, we simply noticed that with this && hack, if
+# By total chance, we simply noticed that with this "&&" hack, if
 # the test fails (i.e. exit code is greater than 0), the shell
 # interrupts the command chain and exits with the right code.
 # Instead, if the test succeeds, the command chain is followed
