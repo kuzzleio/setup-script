@@ -51,7 +51,7 @@ do
     ${BASH_SOURCE%/*}/test-setup.sh $DISTRO $ARGS
     EXIT_VALUE=$?
   fi
-  FORMATTED_DISTRO=$(echo $DISTRO | tr '-' '%20')
+  FORMATTED_DISTRO=$(echo $DISTRO | sed 's/-/%20/g')
   if [ $EXIT_VALUE -ne 0 ]; then
       FINAL_EXIT_VALUE=$EXIT_VALUE
       echo
@@ -73,8 +73,8 @@ do
 done
 
 echo
-echo "=========== Test results ==========="
+echo "============ Test Results ==============="
 cat $REPORT_FILE
-echo "===================================="
+echo "========================================="
 
 exit $FINAL_EXIT_VALUE
