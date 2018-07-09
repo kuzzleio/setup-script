@@ -6,7 +6,7 @@ services:
     volumes:
       - "../:/var/app"
       # Change this if you change the logger filename in the config.
-      - "${PWD}/../kuzzle-analytics.log:/var/log/kuzzle-analytics.log"
+      - "${PWD}/../kuzzle-analytics.log:/var/app/kuzzle-analytics.log"
     environment:
       - analytics_port=80
     command: /run.sh
