@@ -88,13 +88,13 @@ proxy.post("/", (request, result) => {
   console.log(`received ${request.body.type} request.`);
 
   if (!request.body.uid || request.body.uid.length !== 64) {
-    console.error(c.red("[✖] Request must contains a uid"));
+    console.error(c.red("[✖] Request must contain a uid"));
     console.log(request.body);
     return result.sendStatus(403);
   }
 
   if (!request.body.type) {
-    console.error(c.red("[✖] Request must contains a type"));
+    console.error(c.red("[✖] Request must contain a type"));
     return result.sendStatus(403);
   }
 

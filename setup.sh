@@ -48,6 +48,22 @@ MISSING_DEPENDENCY=44
 ERROR_DOWNLOAD_DOCKER_COMPOSE=45
 KUZZLE_NOT_RUNNING_AFTER_INSTALL=46
 
+# Analytics events
+EVENT_START_SETUP=start-setup
+EVENT_ABORT_SETUP=abort-setup
+EVENT_MISSING_DOCKER=missing-docker
+EVENT_MISSING_DOCKER_COMPOSE=missing-docker-compose
+EVENT_DOCKER_VERSION_MISMATCH=docker-version-mismatch
+EVENT_MISSING_SYSCTL=missing-sysctl
+EVENT_WRONG_MAX_MAP_COUNT=wrong-max_map_count
+EVENT_ERR_DL_DOCKER_COMPOSE_YML=error-download-dockercomposeyml
+EVENT_PULLING_CONTAINERS=pulling-latest-containers
+EVENT_PULLED_CONTAINERS=pulled-latest-containers
+EVENT_PULL_FAILED=pull-failed
+EVENT_STARTING_KUZZLE=starting-kuzzle
+EVENT_KUZZLE_FAILED_RUNNING=kuzzle-failed-running
+EVENT_KUZZLE_RUNNING=kuzzle-running
+
 # list of colors
 # see if it supports colors...
 NCOLORS=$(tput colors)
@@ -199,7 +215,7 @@ prerequisite() {
     write_error "    If you would like to install Kuzzle without Docker please refer to $INSTALL_KUZZLE_WITHOUT_DOCKER_URL"
     write_error "    Once Docker is installed make sure it is running before re-running this script."
     echo
-    $KUZZLE_PUSH_ANALYTICS'{"type": "missing-docker", "uid": "'$ANALYTICS_UUID'", "os": "'$OS'"}' $ANALYTICS_URL &> /dev/null
+    $KUZZLE_PUSH_ANALYTICS'{"type": "'$EVENT_MISSING_DOCKER'", "uid": "'$ANALYTICS_UUID'", "os": "'$OS'"}' $ANALYTICS_URL &> /dev/null
     ERROR=$MISSING_DEPENDENCY
   fi
 
@@ -208,7 +224,7 @@ prerequisite() {
     write_error "[✖] This script requires Docker Compose to run Kuzzle. Please install it and re-run this script"
     write_error "    If you would like to install Kuzzle without Docker Compose please refer to $INSTALL_KUZZLE_WITHOUT_DOCKER_URL"
     echo
-    $KUZZLE_PUSH_ANALYTICS'{"type": "missing-docker-compose", "uid": "'$ANALYTICS_UUID'", "os": "'$OS'"}' $ANALYTICS_URL &> /dev/null    
+    $KUZZLE_PUSH_ANALYTICS'{"type": "'$EVENT_MISSING_DOCKER_COMPOSE'", "uid": "'$ANALYTICS_UUID'", "os": "'$OS'"}' $ANALYTICS_URL &> /dev/null    
     ERROR=$MISSING_DEPENDENCY
   fi
 
@@ -218,7 +234,7 @@ prerequisite() {
     if [ $? -ne 0 ]; then
       write_error "[✖] This script requires Docker version $MIN_DOCKER_VER or higher to run Kuzzle"
       echo
-      $KUZZLE_PUSH_ANALYTICS'{"type": "docker-version-mismatch", "uid": "'$ANALYTICS_UUID'", "os": "'$OS'"}' $ANALYTICS_URL &> /dev/null    
+      $KUZZLE_PUSH_ANALYTICS'{"type": "'$EVENT_DOCKER_VERSION_MISMATCH'", "uid": "'$ANALYTICS_UUID'", "os": "'$OS'"}' $ANALYTICS_URL &> /dev/null    
       ERROR=$MISSING_DEPENDENCY
     fi
   fi
@@ -229,7 +245,7 @@ prerequisite() {
       write_error "[✖] This script needs sysctl to check that your kernel settings meet the Kuzzle requirements."
       write_error "    Please install sysctl and re-run this script."
       echo
-      $KUZZLE_PUSH_ANALYTICS'{"type": "missing-sysctl", "uid": "'$ANALYTICS_UUID'", "os": "'$OS'"}' $ANALYTICS_URL &> /dev/null    
+      $KUZZLE_PUSH_ANALYTICS'{"type": "'$EVENT_MISSING_SYSCTL'", "uid": "'$ANALYTICS_UUID'", "os": "'$OS'"}' $ANALYTICS_URL &> /dev/null    
       ERROR=$MISSING_DEPENDENCY
     else
       # Check of vm.max_map_count is at least $MIN_MAX_MAP_COUNT
@@ -244,7 +260,7 @@ prerequisite() {
         write_info  "    To make this change persistent please edit the $BLUE$BOLD/etc/sysctl.conf$NORMAL$RED file"
         write_info  "    and add this line: $BLUE$BOLD vm.max_map_count=$MIN_MAX_MAP_COUNT$NORMAL$RED"
         echo
-        $KUZZLE_PUSH_ANALYTICS'{"type": "wrong-max_map_count", "uid": "'$ANALYTICS_UUID'", "os": "'$OS'"}' $ANALYTICS_URL &> /dev/null    
+        $KUZZLE_PUSH_ANALYTICS'{"type": "'$EVENT_WRONG_MAX_MAP_COUNT'", "uid": "'$ANALYTICS_UUID'", "os": "'$OS'"}' $ANALYTICS_URL &> /dev/null    
         ERROR=$MISSING_DEPENDENCY
       fi
     fi
@@ -269,7 +285,7 @@ download_docker_compose_yml() {
       if [ $RETRY -gt $DOWNLOAD_DOCKER_COMPOSE_YML_MAX_RETRY ]; then
         write_error "[✖] Cannot download $COMPOSE_YML_URL (HTTP ERROR CODE: $TEST)"
         write_error "    If the problem persists please contact us at $SUPPORT_MAIL or on gitter at $GITTER_URL."
-        $KUZZLE_PUSH_ANALYTICS'{"type": "error-download-dockercomposeyml", "uid": "'$ANALYTICS_UUID'", "os": "'$OS'"}' $ANALYTICS_URL &> /dev/null
+        $KUZZLE_PUSH_ANALYTICS'{"type": "'$EVENT_ERR_DL_DOCKER_COMPOSE_YML'", "uid": "'$ANALYTICS_UUID'", "os": "'$OS'"}' $ANALYTICS_URL &> /dev/null
         exit $ERROR_DOWNLOAD_DOCKER_COMPOSE
       fi
       RETRY=$(expr $RETRY + 1)
@@ -283,11 +299,11 @@ download_docker_compose_yml() {
 
 pull_kuzzle() {
   write_info "[ℹ] Pulling the latest version of Kuzzle from Dockerhub..."
-  $KUZZLE_PUSH_ANALYTICS'{"type": "pulling-latest-containers", "uid": "'$ANALYTICS_UUID'", "os": "'$OS'"}' $ANALYTICS_URL &> /dev/null
+  $KUZZLE_PUSH_ANALYTICS'{"type": "'$EVENT_PULLING_CONTAINERS'", "uid": "'$ANALYTICS_UUID'", "os": "'$OS'"}' $ANALYTICS_URL &> /dev/null
   $(command -v docker-compose) -f $COMPOSE_YML_PATH pull
   RET=$?
   if [ $RET -ne 0 ]; then
-    $KUZZLE_PUSH_ANALYTICS'{"type": "pull-failed", "uid": "'$ANALYTICS_UUID'", "os": "'$OS'"}' $ANALYTICS_URL &> /dev/null
+    $KUZZLE_PUSH_ANALYTICS'{"type": "'$EVENT_PULL_FAILED'", "uid": "'$ANALYTICS_UUID'", "os": "'$OS'"}' $ANALYTICS_URL &> /dev/null
     echo
     write_error "[✖] The pull failed. Is Docker running?"
     write_info  "    You can try to run Docker by typing"
@@ -298,11 +314,11 @@ pull_kuzzle() {
     exit $RET
   fi
   write_success "[✔] Pulled."
-  $KUZZLE_PUSH_ANALYTICS'{"type": "pulled-latest-containers", "uid": "'$ANALYTICS_UUID'", "os": "'$OS'"}' $ANALYTICS_URL &> /dev/null  
+  $KUZZLE_PUSH_ANALYTICS'{"type": "'$EVENT_PULLED_CONTAINERS'", "uid": "'$ANALYTICS_UUID'", "os": "'$OS'"}' $ANALYTICS_URL &> /dev/null  
 }
 
 run_kuzzle() {
-  $KUZZLE_PUSH_ANALYTICS'{"type": "starting-kuzzle", "uid": "'$ANALYTICS_UUID'", "os": "'$OS'"}' $ANALYTICS_URL &> /dev/null      
+  $KUZZLE_PUSH_ANALYTICS'{"type": "'$EVENT_STARTING_KUZZLE'", "uid": "'$ANALYTICS_UUID'", "os": "'$OS'"}' $ANALYTICS_URL &> /dev/null      
   echo
   write_info "[ℹ] Starting Kuzzle..."
   $(command -v docker-compose) -f $COMPOSE_YML_PATH up -d
@@ -317,7 +333,7 @@ check_kuzzle() {
   while ! $KUZZLE_CHECK_CONNECTIVITY_CMD &> /dev/null
     do
     if [ $RETRY -gt $CONNECT_TO_KUZZLE_MAX_RETRY ]; then
-      $KUZZLE_PUSH_ANALYTICS'{"type": "kuzzle-failed-running", "uid": "'$ANALYTICS_UUID'", "os": "'$OS'"}' $ANALYTICS_URL &> /dev/null    
+      $KUZZLE_PUSH_ANALYTICS'{"type": "'$EVENT_KUZZLE_FAILED_RUNNING'", "uid": "'$ANALYTICS_UUID'", "os": "'$OS'"}' $ANALYTICS_URL &> /dev/null    
       >&2 echo
       write_error "[✖] Ooops! Something went wrong."
       write_error "    Kuzzle does not seem to be running"
@@ -336,7 +352,7 @@ check_kuzzle() {
       sleep 1
       RETRY=$(expr $RETRY + 1)
     done
-  $KUZZLE_PUSH_ANALYTICS'{"type": "kuzzle-running", "uid": "'$ANALYTICS_UUID'", "os": "'$OS'"}' $ANALYTICS_URL &> /dev/null
+  $KUZZLE_PUSH_ANALYTICS'{"type": "'$EVENT_KUZZLE_RUNNING'", "uid": "'$ANALYTICS_UUID'", "os": "'$OS'"}' $ANALYTICS_URL &> /dev/null
   echo
   write_success "[✔] Kuzzle is now running."
   echo
@@ -411,7 +427,7 @@ check_internet_access
 os_lookup
 write_scripts
 
-$KUZZLE_PUSH_ANALYTICS'{"type": "start-setup", "uid": "'$ANALYTICS_UUID'", "os": "'$OS'"}' $ANALYTICS_URL &> /dev/null
+$KUZZLE_PUSH_ANALYTICS'{"type": "'$EVENT_START_SETUP'", "uid": "'$ANALYTICS_UUID'", "os": "'$OS'"}' $ANALYTICS_URL &> /dev/null
 
 prerequisite
 
@@ -419,7 +435,7 @@ trap abort_setup INT
 
 # send abort-setup event to analytics on SIGINT
 abort_setup() {
-  $KUZZLE_PUSH_ANALYTICS'{"type": "abort-setup", "uid": "'$ANALYTICS_UUID'", "os": "'$OS'"}' $ANALYTICS_URL &> /dev/null
+  $KUZZLE_PUSH_ANALYTICS'{"type": "'$EVENT_ABORT_SETUP'", "uid": "'$ANALYTICS_UUID'", "os": "'$OS'"}' $ANALYTICS_URL &> /dev/null
   exit 1
 }
 
