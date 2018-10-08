@@ -241,19 +241,20 @@ prerequisite() {
   fi
 
   # check if kuzzle has enough ram
-  free_ram=$(free -m | grep Mem | awk '{ print $7 }')
-  free_swap=$(free -m | grep Swap | awk '{ print $4 }')
-  let free_total=$free_ram+$free_swap
-  echo $free_total
+  if [ "$OS" != "OSX" ]; then
+    free_ram=$(grep MemAvailable /proc/meminfo | awk '{ print $2 }')
+    free_swap=$(grep SwapFree /proc/meminfo | awk '{ print $2 }')
+    let free_total=$free_ram+$free_swap
 
-  if [ $free_total -lt 1400 ]; then
-    write_error
-    write_error "[✖] Not enough memory available to run Kuzzle."
-    write_error "    Kuzzle needs at least 1.4GB of free memory."
-    write_error "    Please consider quitting one or more applications to increase available memory, and then try again."
-    echo
-    $KUZZLE_PUSH_ANALYTICS'{"type": "'$EVENT_OUT_OF_MEMORY'", "uid": "'$ANALYTICS_UUID'", "os": "'$OS'"}' $ANALYTICS_URL &> /dev/null
-    ERROR=$MISSING_DEPENDENCY
+    if [ $free_total -lt 1433600 ]; then
+      write_error
+      write_error "[✖] Not enough memory available to run Kuzzle."
+      write_error "    Kuzzle needs at least 1.4GB of free memory."
+      write_error "    Please consider quitting one or more applications to increase available memory, and then try again."
+      echo
+      $KUZZLE_PUSH_ANALYTICS'{"type": "'$EVENT_OUT_OF_MEMORY'", "uid": "'$ANALYTICS_UUID'", "os": "'$OS'"}' $ANALYTICS_URL &> /dev/null
+      ERROR=$MISSING_DEPENDENCY
+    fi
   fi
 
   # Check if sysctl exists on the machine
