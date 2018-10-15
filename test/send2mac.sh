@@ -22,9 +22,9 @@ echo Running test
 kssh $dir/test/run-macos.sh
 
 if [ $? -eq 0 ]; then
-  curl -L https://img.shields.io/badge/setup.sh-osx-green.svg -o $badges_dir/osx.svg
+  curl -sL https://img.shields.io/badge/setup.sh-osx-green.svg -o $badges_dir/osx.svg
 else
-  curl -L https://img.shields.io/badge/setup.sh-osx-red.svg -o $badges_dir/osx.svg
+  curl -sL https://img.shields.io/badge/setup.sh-osx-red.svg -o $badges_dir/osx.svg
 fi
 
 echo Cleaning up

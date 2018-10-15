@@ -11,10 +11,13 @@ badges_dir=$here/../setupsh-badges
 badge_label=$(echo "$dist" | sed 's/-/%20/')
 
 _error () {
+  # dump docker-compose if available
+  docker exec -t $container docker-compose -v > /dev/null \
+    && docker exec -t $container docker-compose -f kuzzle/docker-compose.yml logs \
+    && docker exec -t $container timeout 10 docker-compose -f kuzzle/docker-compose.yml up
+  sleep 3000
   # mark test as red
-  curl -L https://img.shields.io/badge/setup.sh-${badge_label}-red.svg -o $badges_dir/$dist.svg
-
-  remove_container
+  curl -sL https://img.shields.io/badge/setup.sh-${badge_label}-red.svg -o $badges_dir/$dist.svg
 }
 
 trap _error INT ERR
@@ -161,5 +164,4 @@ docker exec -t $container \
   ./setupsh.should "run Kuzzle successfully" "Kuzzle successfully installed" 0
 
 # all tests ok > set badge to green
-curl -L https://img.shields.io/badge/setup.sh-${badge_label}-green.svg -o $badges_dir/$dist.svg
-
+curl -sL https://img.shields.io/badge/setup.sh-${badge_label}-green.svg -o $badges_dir/$dist.svg

@@ -1,3 +1,3 @@
 #!/bin/bash
 
-$(/usr/bin/dockerd)
+$(/usr/bin/dockerd -s vfs)
