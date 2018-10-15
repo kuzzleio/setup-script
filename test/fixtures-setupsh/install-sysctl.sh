@@ -6,5 +6,5 @@ fi
 
 # Detect dnf
 if [ $(command -v dnf) ]; then
-    dnf install -y procps
+    dnf install -yq procps
 fi

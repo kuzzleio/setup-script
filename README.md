@@ -2,7 +2,7 @@
 
 **Supported OS**
 
-![Debian Jessie](https://kuzzleio.github.io/setup-script/debian-jessie.svg) ![Fedora](https://kuzzleio.github.io/setup-script/fedora.svg) ![Ubuntu Artful](https://kuzzleio.github.io/setup-script/ubuntu-artful.svg) ![Mac OS](https://kuzzleio.github.io/setup-script/osx.svg)
+![Debian](https://kuzzleio.github.io/setup-script/debian.svg) ![Fedora](https://kuzzleio.github.io/setup-script/fedora.svg) ![Ubuntu](https://kuzzleio.github.io/setup-script/ubuntu.svg) ![Mac OS](https://kuzzleio.github.io/setup-script/osx.svg)
 
 The docker-compose files in the `docker-compose` dir will allow you to run Kuzzle with optional SSL support.
 

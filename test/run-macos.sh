@@ -1,5 +1,7 @@
 #!/bin/bash
 
+here="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null && pwd )"
+
 LOCK_FILE=/tmp/test-setupsh.lock
 LOCK_SLEEP=2
 LOCK_MAX_RETRY=250

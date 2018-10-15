@@ -1,3 +1,3 @@
 #!/bin/bash
 
-$(dockerd)
+$(/usr/bin/dockerd)
