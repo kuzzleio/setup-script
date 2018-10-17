@@ -27,7 +27,7 @@ jobs:
       - test/test-setup.sh debian
 
     - stage: test
-      name: ubuntu bionic
+      name: Ubuntu Bionic - 18.04
       env:
       script:
         - test/test-setup.sh ubuntu
