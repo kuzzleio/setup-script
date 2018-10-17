@@ -33,7 +33,7 @@ jobs:
         - test/test-setup.sh ubuntu
 
     - stage: test
-      name: macosx
+      name: Mac OSX
       env:
       script:
         - test/send2mac.sh
