@@ -21,7 +21,7 @@ jobs:
         - test/test-setup.sh fedora
 
     - stage: test
-      name: debian stretch
+      name: Debian Stretch - 9.0
       env:
       script:
       - test/test-setup.sh debian
