@@ -15,7 +15,7 @@ stages:
 jobs:
   include:
     - stage: test
-      name: fedora 28
+      name: Fedora - 28
       env:
       script:
         - test/test-setup.sh fedora
