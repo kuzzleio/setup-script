@@ -12,7 +12,7 @@ if [ $(command -v apt-get) ]; then
 fi
 
 if [ $(command -v dnf) ]; then
-    dnf install -y wget
+    dnf install -yq wget
     exit 0
 fi
 

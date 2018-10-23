@@ -1,18 +1,17 @@
 #!/bin/bash
 
+set -e
+
 install_via_apt() {
-    apt-get update
     apt-get install -y \
-        software-properties-common python-software-properties \
-        lsb-core lsb-release \
-        apt-transport-https \
-        ca-certificates \
-        curl \
-        software-properties-common
+      apt-transport-https \
+      ca-certificates \
+      curl \
+      gnupg2 \
+      lsb-release \
+      software-properties-common
 
     curl -fsSL https://download.docker.com/linux/$(lsb_release -si | tr 'A-Z' 'a-z')/gpg | apt-key add -
-
-    apt-key fingerprint 0EBFCD88
 
     add-apt-repository \
     "deb [arch=amd64] https://download.docker.com/linux/$(lsb_release -si | tr 'A-Z' 'a-z') \
@@ -25,13 +24,13 @@ install_via_apt() {
 }
 
 install_via_dnf() {
-    dnf -y install dnf-plugins-core
+    dnf install -yq dnf-plugins-core
 
-    dnf config-manager \
+    dnf config-manager -q \
         --add-repo \
         https://download.docker.com/linux/fedora/docker-ce.repo
     
-    dnf install -y docker-ce
+    dnf install -yq docker-ce
 }
 
 if [ $(command -v apt-get) ]; then

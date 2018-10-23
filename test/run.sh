@@ -2,7 +2,7 @@
 
 FINAL_EXIT_VALUE=0
 BADGES_DIR=./setupsh-badges
-DEFAULT_DISTROS="fedora,ubuntu-artful,debian-jessie,osx"
+DEFAULT_DISTROS="fedora,ubuntu-artful,debian-stretch,osx"
 REPORT_FILE=.setupsh-test.report
 
 [[ -f $REPORT_FILE ]] && rm $REPORT_FILE
