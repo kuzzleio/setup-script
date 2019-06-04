@@ -18,7 +18,7 @@ COMPOSE_YML_PATH=$KUZZLE_DIR/docker-compose.yml
 INSTALL_KUZZLE_WITHOUT_DOCKER_URL="https://docs.kuzzle.io/guide/essentials/installing-kuzzle/#manually"
 MIN_DOCKER_VER=1.12.0
 MIN_MAX_MAP_COUNT=262144
-CONNECT_TO_KUZZLE_MAX_RETRY=${CONNECT_TO_KUZZLE_MAX_RETRY:=30} # in seconds
+CONNECT_TO_KUZZLE_MAX_RETRY=${CONNECT_TO_KUZZLE_MAX_RETRY:=60} # in seconds
 CONNECT_TO_KUZZLE_WAIT_TIME_BETWEEN_RETRY=1 
 DOWNLOAD_DOCKER_COMPOSE_YML_MAX_RETRY=3
 DOWNLOAD_DOCKER_COMPOSE_RETRY_WAIT_TIME=1 # in seconds
@@ -54,6 +54,7 @@ EVENT_ABORT_SETUP=abort-setup
 EVENT_MISSING_DOCKER=missing-docker
 EVENT_MISSING_DOCKER_COMPOSE=missing-docker-compose
 EVENT_DOCKER_VERSION_MISMATCH=docker-version-mismatch
+EVENT_OUT_OF_MEMORY=out-of-memory
 EVENT_MISSING_SYSCTL=missing-sysctl
 EVENT_WRONG_MAX_MAP_COUNT=wrong-max_map_count
 EVENT_ERR_DL_DOCKER_COMPOSE_YML=error-download-dockercomposeyml
@@ -239,9 +240,26 @@ prerequisite() {
     fi
   fi
 
+  # check if kuzzle has enough ram
+  if [ "$OS" != "OSX" ]; then
+    free_ram=$(grep MemAvailable /proc/meminfo | awk '{ print $2 }')
+    free_swap=$(grep SwapFree /proc/meminfo | awk '{ print $2 }')
+    let free_total=$free_ram+$free_swap
+
+    if [ $free_total -lt 1433600 ]; then
+      write_error
+      write_error "[✖] Not enough memory available to run Kuzzle."
+      write_error "    Kuzzle needs at least 1.4GB of free memory."
+      write_error "    Please consider quitting one or more applications to increase available memory, and then try again."
+      echo
+      $KUZZLE_PUSH_ANALYTICS'{"type": "'$EVENT_OUT_OF_MEMORY'", "uid": "'$ANALYTICS_UUID'", "os": "'$OS'"}' $ANALYTICS_URL &> /dev/null
+      ERROR=$MISSING_DEPENDENCY
+    fi
+  fi
+
   # Check if sysctl exists on the machine
   if [ "$OS" != "OSX" ]; then
-    if ! command_exists sysctl; then
+    if ! command_exists /sbin/sysctl; then
       write_error "[✖] This script needs sysctl to check that your kernel settings meet the Kuzzle requirements."
       write_error "    Please install sysctl and re-run this script."
       echo
@@ -249,7 +267,7 @@ prerequisite() {
       ERROR=$MISSING_DEPENDENCY
     else
       # Check of vm.max_map_count is at least $MIN_MAX_MAP_COUNT
-      VM_MAX_MAP_COUNT=$(sysctl -n vm.max_map_count)
+      VM_MAX_MAP_COUNT=$(/sbin/sysctl -n vm.max_map_count)
       if [ -z "${VM_MAX_MAP_COUNT}" ] || [ ${VM_MAX_MAP_COUNT} -lt $MIN_MAX_MAP_COUNT ]; then
         write_error
         write_error "[✖] The current value of the kernel configuration variable vm.max_map_count (${VM_MAX_MAP_COUNT})"
