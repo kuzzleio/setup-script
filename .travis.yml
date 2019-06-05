@@ -1,48 +1,71 @@
-dist: trusty
-sudo: required
-
-services:
-  - docker
-
-before_install:
-  - openssl aes-256-cbc -K $encrypted_fe7d4190ec44_key -iv $encrypted_fe7d4190ec44_iv -in id_rsa.travis.enc -out ~/.ssh/id_rsa -d
-  - chmod 600 ~/.ssh/id_rsa
-  - sudo sysctl -w vm.max_map_count=262144
-
-stages:
-  - name: test
-
 jobs:
   include:
     - stage: test
       name: Fedora - 28
-      env:
+      dist: xenial
+      sudo: required
+      language: minimal
+
+      services:
+        - docker
+
+      before_install:
+        - sudo sysctl -w vm.max_map_count=262144
+
       script:
         - test/test-setup.sh fedora
 
     - stage: test
       name: Debian Stretch - 9.0
-      env:
+      dist: xenial
+      sudo: required
+      language: minimal
+
+      services:
+        - docker
+
+      before_install:
+        - sudo sysctl -w vm.max_map_count=262144
       script:
       - test/test-setup.sh debian
 
     - stage: test
       name: Ubuntu Bionic - 18.04
       env:
+      dist: xenial
+      sudo: required
+      language: minimal
+
+      services:
+        - docker
+
+      before_install:
+        - sudo sysctl -w vm.max_map_count=262144
       script:
         - test/test-setup.sh ubuntu
 
     - stage: test
       name: Mac OSX
-      env:
+      dist: xenial
+      sudo: required
+      language: minimal
+
+      services:
+        - docker
+
+      before_install:
+        - openssl aes-256-cbc -K $encrypted_fe7d4190ec44_key -iv $encrypted_fe7d4190ec44_iv -in id_rsa.travis.enc -out ~/.ssh/id_rsa -d
+        - chmod 600 ~/.ssh/id_rsa
+        - sudo sysctl -w vm.max_map_count=262144
       script:
         - test/send2mac.sh
 
-deploy:
-  provider: pages
-  skip-cleanup: true
-  local-dir: setupsh-badges
-  github-token: "$GITHUB_TOKEN"
-  keep-history: true
-  on:
-    branch: master
+# ---------------------------------------
+# Notifications
+# ---------------------------------------
+notifications:
+  slack:
+    rooms:
+      - secure: "CV4W6sphWrd43hJDuyI431NRbvfU6vykaxAOOET3E5fUVWIQMifE5HY7rGwzQxeLMExaTjUA0BcZUuFfFU7B1+gyYo+I4aq6WZQXLybZtvxOMB44padJe+UiTTf0VJ1U1sqmswehx+XxSTzRfMGSlnWv0ZrYrqkAkQx/t+F6w128X4WkPsLDwE5s02FTNAm8p4zb3sl+nsKqZh72f9A+fjYPQXMqp/Zbsm5MsSndWYFtcgIvGjDIuazIqZ1dznxHRR87PglMQRS662mlfymKdbxnnVIS9VE+3b3FUQW4+8X1CHpxzYrE5vbnC+FL30P1hBWnGJC06QaoRdhl9zIkeecei5QTB5wz2SKmF3Pav2DIQxZBJN63TuAJyqOXEPP6WXSpjpAGbYf6ZMaqnQXSpBEwRGf02b7ilmM3WwO3A15BWnjzqBZWTKBpySg/OU6WkzuarikM5uMMdbapuV3l/r9GwSJqCxkCZxCi52WctCxvmBWm/83w/YWjn7gFPYX7ub6W0emPdssQTPgAHSWv9dSrpzkV8j4yo92ntid29jQUbvDfnq9jWC0sB0WBB5kGTw7mHj0qSkeMysbWDND95vU5JlwthqrWMfM7mlBJy1Qhwy50AuaykzDdGk7y+ne+83sie0IKTysR9LwY7iw5brzkwpLvlbc+zNIOn2Pb3s4="
+    on_success: never
+    on_failure: always

@@ -1,8 +1,7 @@
 # Docker-compose files to run the Kuzzle stack
 
-**Supported OS**
 
-![Debian](https://kuzzleio.github.io/setup-script/debian.svg) ![Fedora](https://kuzzleio.github.io/setup-script/fedora.svg) ![Ubuntu](https://kuzzleio.github.io/setup-script/ubuntu.svg) ![Mac OS](https://kuzzleio.github.io/setup-script/osx.svg)
+![Tested on](https://img.shields.io/badge/tested%20on-debian%20%7C%20ubuntu%20%7C%20fedora%20%7C%20osx-green.svg)
 
 The docker-compose files in the `docker-compose` dir will allow you to run Kuzzle with optional SSL support.
 
