@@ -14,7 +14,7 @@ _error () {
   # dump docker-compose if available
   docker exec -t $container docker-compose -v > /dev/null \
     && docker exec -t $container docker-compose -f kuzzle/docker-compose.yml logs \
-    && docker exec -t $container timeout 10 docker-compose -f kuzzle/docker-compose.yml up
+    && docker exec -t $container timeout --preserve-status 10 docker-compose -f kuzzle/docker-compose.yml up
   sleep 3000
   # mark test as red
   curl -sL https://img.shields.io/badge/setup.sh-${badge_label}-red.svg -o $badges_dir/$dist.svg
@@ -162,6 +162,3 @@ docker exec -t $container /opt/test/fixtures-setupsh/launch-dockerd.sh > $output
 
 docker exec -t $container \
   ./setupsh.should "run Kuzzle successfully" "Kuzzle successfully installed" 0
-
-# all tests ok > set badge to green
-curl -sL https://img.shields.io/badge/setup.sh-${badge_label}-green.svg -o $badges_dir/$dist.svg
