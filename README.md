@@ -14,7 +14,7 @@ The script will _not_ install any dependencies on your behalf, but will instead 
 To run it, you don't need to clone this repository, you can just type
 
 ```
-$ bash -c "$(curl https://raw.githubusercontent.com/kuzzleio/kuzzle-build/master/setup.sh)"
+$ bash -c "$(curl https://raw.githubusercontent.com/kuzzleio/setup-script/master/setup.sh)"
 ```
 
 Or, you can clone this repository and run the script with options
